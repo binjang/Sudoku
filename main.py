@@ -114,12 +114,16 @@ def sudoku_solver(sudoku):
         not_found_pos.append(pos)
 
     cnt = 0
+    min_pos = 9
     while len(not_found) > 0:
         cnt += 1
         for i in range(len(not_found)):
             print(i, "th loop")
             print("Blanks to fill: ", len(not_found))
-            print("no_found_pos", not_found_pos)
+            print("not_found_pos", not_found_pos)
+
+            # if len(not_found_pos[i]) < min_pos: min_pos = len(not_found_pos[i])
+
             if len(not_found_pos[i]) == 1:
 
                 print("Filling in blank: ", not_found[i][0])
@@ -136,26 +140,55 @@ def sudoku_solver(sudoku):
                                 not_found_pos[j].remove(not_found_pos[i][0])
 
                 not_found.pop(i) # Remove index from list
-                not_found_pos.pop(i) # Remove choice from list
+                not_found_pos.pop(i) # Remove the list of candidates from t he 2D list
                 break
 
-            elif len(not_found_pos[i]) == 2:
-                print("Guessing blank: ", not_found[i][0])
-                print("Guess: ", not_found_pos[i][0])
-                print("Blanks left: ", len(not_found) - 1)
-
-                sudoku[not_found[i][0]] = not_found_pos[i][0]  # Fill the blank with the only possible choice
-
+            for i in range(len(not_found)):
+                # print("i: ", i)
+                # print("not_found", not_found)
+                # print("not_found_pos", len(not_found_pos))
+                candidates = not_found_pos[i].copy()
+                candidates_count = []
                 for j in range(len(not_found)):
-                    is_pos = not_found_pos[j].count(not_found_pos[i][0]) != 0
-                    if not_found[j][1] == not_found[i][1] or not_found[j][2] == not_found[i][2] or not_found[j][3] == \
-                            not_found[i][3]:
-                        if is_pos:
-                            if i != j:
-                                not_found_pos[j].remove(not_found_pos[i][0])
-                not_found.pop(i)  # Remove index from list
-                not_found_pos.pop(i)  # Remove choice from list
-                break
+                    if not_found[i][1] == not_found[j][1]:
+                        for k in range(len(candidates)):
+                            candidates_count[k] += not_found_pos[j].count(candidates[k])
+                # print("candidates", candidates)
+                # print("not_found_pos[i]", not_found_pos[i])
+                for j in range(len(candidates)):
+                    if candidates[j] == 1:
+                        sudoku[not_found[i][0]] = not_found_pos[i][j]  # Fill the blank with the only possible choice
+
+                    for k in range(len(not_found)):
+                        is_pos = not_found_pos[k].count(not_found_pos[i][j]) != 0
+                        if not_found[k][1] == not_found[i][1] or not_found[k][2] == not_found[i][2] or not_found[k][
+                            3] == \
+                                not_found[i][3]:
+                            if is_pos:
+                                if i != k:
+                                    not_found_pos[k].remove(not_found_pos[i][j])
+
+                    not_found.pop(i)  # Remove index from list
+                    not_found_pos.pop(i)  # Remove the list of candidates from t he 2D list
+                    break
+
+            # elif len(not_found_pos[i]) == 2:
+            #     print("Guessing blank: ", not_found[i][0])
+            #     print("Guess: ", not_found_pos[i][0])
+            #     print("Blanks left: ", len(not_found) - 1)
+            #
+            #     sudoku[not_found[i][0]] = not_found_pos[i][0]  # Fill the blank with the only possible choice
+            #
+            #     for j in range(len(not_found)):
+            #         is_pos = not_found_pos[j].count(not_found_pos[i][0]) != 0
+            #         if not_found[j][1] == not_found[i][1] or not_found[j][2] == not_found[i][2] or not_found[j][3] == \
+            #                 not_found[i][3]:
+            #             if is_pos:
+            #                 if i != j:
+            #                     not_found_pos[j].remove(not_found_pos[i][0])
+            #     not_found.pop(i)  # Remove index from list
+            #     not_found_pos.pop(i)  # Remove choice from list
+            #     break
 
         if cnt == 100: break
 
@@ -165,4 +198,25 @@ def sudoku_solver(sudoku):
     print("--- %s seconds ---" % (time.time() - start_time))
 
 
+# for i in len(not_found):
+#     candidates = not_found_pos[i]
+#     for j in len(not_found):
+#         if i != j and not_found[i][1] == not_found[j][1]:
+#             if candidates.count(pos) != 0 for pos in not_found_pos[j]:
+#                 candidates.remove(pos)
+#     if len(candidates) == 1:
+#         sudoku[not_found[i][0]] = not_found_pos[i][0]  # Fill the blank with the only possible choice
+#
+#         for j in range(len(not_found)):
+#             is_pos = not_found_pos[j].count(not_found_pos[i][0]) != 0
+#             if not_found[j][1] == not_found[i][1] or not_found[j][2] == not_found[i][2] or not_found[j][3] == \
+#                     not_found[i][3]:
+#                 if is_pos:
+#                     if i != j:
+#                         not_found_pos[j].remove(not_found_pos[i][0])
+#
+#         not_found.pop(i)  # Remove index from list
+#         not_found_pos.pop(i)  # Remove the list of candidates from t he 2D list
+#     for j in len(not_found_pos[i]):
+#         if not_found_pos[i][j]
 sudoku_solver(sudoku)
